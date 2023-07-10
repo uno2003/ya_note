@@ -1,5 +1,6 @@
 # test_routes.py
 from http import HTTPStatus
+from pytest_django.asserts import assertRedirects
 
 import pytest
 from django.urls import reverse
@@ -51,3 +52,25 @@ def test_pages_availability_for_different_users(
     # Ожидаем ответ страницы, указанный в expected_status:
     assert response.status_code == expected_status
 
+
+
+@pytest.mark.parametrize(
+    # Вторым параметром передаём note_object,
+    # в котором будет либо фикстура с объектом заметки, либо None.
+    'name, args',
+    (
+        ('notes:detail', pytest.lazy_fixture('slug_for_args')),
+        ('notes:edit', pytest.lazy_fixture('slug_for_args')),
+        ('notes:delete', pytest.lazy_fixture('slug_for_args')),
+        ('notes:add', None),
+        ('notes:success', None),
+        ('notes:list', None),
+    ),
+)
+# Передаём в тест анонимный клиент, name проверяемых страниц и note_object:
+def test_redirects(client, name, args):
+    login_url = reverse('users:login')
+    url = reverse(name, args=args)
+    expected_url = f'{login_url}?next={url}'
+    response = client.get(url)
+    assertRedirects(response, expected_url)

@@ -35,7 +35,6 @@ class TestRoutes(TestCase):
             with self.subTest(name=name):
                 url = reverse(name, args=args)
                 response = self.client.get(url)
-                print(response)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
 
