@@ -25,8 +25,7 @@ def test_pages_availability_for_anonymous_user(client, name):
     response = client.get(url)  # Выполняем запрос.
     assert response.status_code == HTTPStatus.OK
 
-# test_routes.py
-...
+
 
 @pytest.mark.parametrize(
     'parametrized_client, expected_status',
